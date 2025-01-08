@@ -1,0 +1,5 @@
+.env
+
+*.jpg
+*.ipynb
+*.h5
