@@ -24,7 +24,6 @@ def extract_faces(
     if img is None:
         raise ValueError(f"Exception while loading {img_name}")
     
-    print(img.shape)
     height, width, _ = img.shape
 
     base_region = FacialAreaRegion(
