@@ -3,3 +3,7 @@
 *.jpg
 *.ipynb
 *.h5
+
+.gitignore
+
+**/__pycache__/
