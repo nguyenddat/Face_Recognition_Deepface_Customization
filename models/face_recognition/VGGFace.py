@@ -22,7 +22,7 @@ class VGGFaceClient(FacialRecogition):
     def __init__(self):
         self.model = self.load_model()
         self.model_name = "VGG-Face"
-        self.input_shape = (224, 244)
+        self.input_shape = (224, 224)
         self.output_shape = 4096
     
     def forward(self, img: np.ndarray) -> List[float]:

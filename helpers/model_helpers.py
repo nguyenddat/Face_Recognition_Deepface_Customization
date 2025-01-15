@@ -7,7 +7,7 @@ def l2_normalize(
     axis: Union[int, None] = None,
     epsilon: float = 1e-10
 ) -> np.ndarray:
-    x = np.asarray()
+    x = np.asarray(x)
     norm = np.linalg.norm(x, axis = axis, keepdims = True)
     return x / (norm + epsilon)
 
