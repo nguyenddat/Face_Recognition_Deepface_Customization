@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 from heapq import nlargest
 
-from modules import modeling, preprocessing
+from modules import modeling, preprocessing, representation
 from helpers import image_helpers
 from schemas.Detector import *
 
@@ -162,3 +162,41 @@ def extract_face(img: np.ndarray,
         ),
         confidence = confidence or 0
     )
+
+def extract_embeddings_and_facial_areas(img_path: Union[str, np.ndarray],
+                                        model_name: str = "VGG-Face",
+                                        detector_backend: str = "opencv",
+                                        align: bool = True,
+                                        normalize_face: bool = True):
+    try:
+        img_embeddings, img_facial_areas =  extract_faces_and_embeddings(img_path = img_path,
+                                                                         model_name = model_name,
+                                                                         detector_backend = detector_backend,
+                                                                         align = align,
+                                                                         normalize_face = normalize_face)
+    except ValueError as err:
+        raise ValueError("Exception while processing img") from err
+    
+    return img_embeddings, img_facial_areas
+
+def extract_faces_and_embeddings(img_path: np.ndarray,
+                                 model_name: str = "VGG-Face",
+                                 detector_backend: str = "opencv",
+                                 align: bool = True,
+                                 normalize_face: bool = True):
+    embeddings = []
+    facial_areas = []
+
+    resp_objs = extract_faces(img_path = img_path,
+                              detector_backend = detector_backend,
+                              align = align, 
+                              normalize_face = normalize_face)
+    
+    for resp_obj in resp_objs:
+        current_img = resp_obj["img"]
+        
+        img_embedding = representation.represent(img = current_img, model_name = model_name)
+        embeddings.append(img_embedding)
+        facial_areas.append(resp_obj["facial_area"])
+    
+    return embeddings, facial_areas

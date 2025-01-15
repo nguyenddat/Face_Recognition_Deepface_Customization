@@ -8,6 +8,9 @@ from pathlib import Path
 import cv2
 from PIL import Image
 
+IMAGE_EXTS = {".jpg", ".jpeg", ".png"}
+PIL_EXTS = {"jpeg", "png"}
+
 def list_images(path: str) -> List[str]:
     images = []
     
@@ -75,3 +78,12 @@ def load_image_from_base64(uri: str) -> np.ndarray:
     nparr = np.frombuffer(decoded_bytes, np.uint8)
     img_bgr = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     return img_bgr
+
+def yield_image(path: str) -> Generator[str, None, None]:
+    for r, _, f in os.walk(path):
+        for file in f:
+            if os.path.splitext(file)[1].lower() in IMAGE_EXTS:
+                exact_path = os.path.join(r, file)
+                with Image.open(exact_path) as img:
+                    if img.format.lower() in PIL_EXTS:
+                        yield exact_path

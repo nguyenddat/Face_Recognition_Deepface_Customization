@@ -1,6 +1,7 @@
 from typing import *
 
 import numpy as np
+import pickle
 
 def l2_normalize(
     x: Union[np.ndarray, list],
@@ -69,7 +70,7 @@ def find_distance(
     else:
         raise ValueError("Invalid distance metric passed")
     return np.round(distance, 6)
-    
+
 def find_threshold(
     model_name: str,
     distance_metric: str
