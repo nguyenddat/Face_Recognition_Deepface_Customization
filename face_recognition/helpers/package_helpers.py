@@ -2,7 +2,7 @@ import hashlib
 
 import tensorflow as tf
 
-from helpers.logger import logger
+from ..helpers.logger import logger
 
 def get_tf_major_version() -> int:
     return int(tf.__version__.split(".", maxsplit=1)[0])

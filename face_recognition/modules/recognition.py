@@ -5,8 +5,8 @@ import pickle
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor
 
-from helpers import image_helpers
-from modules import detection, verification
+from ..helpers import image_helpers
+from ..modules import detection, verification
 
 def find(
     img_path: Union[str, np.ndarray],

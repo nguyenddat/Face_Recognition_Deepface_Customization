@@ -2,9 +2,9 @@ from typing import *
 
 import numpy as  np
 
-from helpers import package_helpers, weight_helpers, model_helpers
-from helpers.logger import logger 
-from schemas.FacialRecognition import FacialRecogition
+from ...helpers import package_helpers, weight_helpers, model_helpers
+from ...helpers.logger import logger 
+from ...schemas.FacialRecognition import FacialRecogition
 
 tf_version = package_helpers.get_tf_major_version()
 if tf_version == 1:

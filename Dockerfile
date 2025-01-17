@@ -1,18 +1,19 @@
 FROM python:3.12.6
 
-RUN apt-get update && apt-get install -y 
-RUN apt-get install -y gcc g++ python3-dev musl-dev libffi-dev
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    python3-dev \
+    musl-dev \
+    libffi-dev \
+    libgl1-mesa-glx
 
 RUN mkdir FaceRecognition 
-RUN cd FaceRecognition
-COPY .env /FaceRecognition
+COPY . FaceRecognition
+WORKDIR /FaceRecognition
 
-RUN mkdir api
-COPY ./api /api
+RUN pip install -r requirements.txt
 
-RUN mkdir face_recogntion
-COPY ./face_recogntion face_recogntion
-
-WORKDIR /api
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 

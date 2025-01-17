@@ -4,7 +4,7 @@ import numpy as np
 
 import cv2
 
-from schemas.Detector import Detector, FacialAreaRegion
+from ...schemas.Detector import Detector, FacialAreaRegion
 
 class OpenCvClient(Detector):
     def __init__(self):

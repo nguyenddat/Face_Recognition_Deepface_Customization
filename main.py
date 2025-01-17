@@ -2,8 +2,8 @@ import uvicorn
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from .api import recognition
-from .core import config
+from test_api.api import recognition
+from test_api.core import config
 
 def get_application() -> FastAPI:
     application = FastAPI()

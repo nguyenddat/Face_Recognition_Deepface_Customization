@@ -3,7 +3,7 @@ from typing import *
 import numpy as np
 from retinaface import RetinaFace as rf
 
-from schemas.Detector import Detector, FacialAreaRegion
+from ...schemas.Detector import Detector, FacialAreaRegion
 
 class RetinaFaceClient(Detector):
     def __init__(self):

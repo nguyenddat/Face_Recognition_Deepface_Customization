@@ -3,9 +3,9 @@ from typing import *
 import numpy as np
 from heapq import nlargest
 
-from  helpers import image_helpers
-from modules import modeling, detection, preprocessing
-from schemas.FacialRecognition import FacialRecogition
+from ..helpers import image_helpers
+from ..modules import modeling, detection, preprocessing
+from ..schemas.FacialRecognition import FacialRecogition
 
 def represent(img: np.ndarray,
               model_name: str = "VGG-Face"):

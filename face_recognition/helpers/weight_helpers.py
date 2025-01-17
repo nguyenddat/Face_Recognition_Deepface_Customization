@@ -5,8 +5,8 @@ import bz2
 
 import gdown
 
-from helpers import folder_helpers, package_helpers
-from helpers.logger import logger
+from ..helpers import folder_helpers, package_helpers
+from ..helpers.logger import logger
 
 tf_version = package_helpers.get_tf_major_version()
 if tf_version == 1:

@@ -1,7 +1,7 @@
 from typing import *
 
-from models.face_detection import OpenCv, RetinaFace
-from models.face_recognition import VGGFace
+from ..models.face_detection import OpenCv, RetinaFace
+from ..models.face_recognition import VGGFace
 
 models = {
     "facial_recognition": {

@@ -4,9 +4,9 @@ import numpy as np
 import cv2
 from heapq import nlargest
 
-from modules import modeling, preprocessing, representation
-from helpers import image_helpers
-from schemas.Detector import *
+from ..modules import modeling, preprocessing, representation
+from ..helpers import image_helpers
+from ..schemas.Detector import *
 
 def extract_faces(img_path: Union[str, np.ndarray],
                   detector_backend: str = "opencv",

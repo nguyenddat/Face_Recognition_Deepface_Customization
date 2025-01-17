@@ -3,10 +3,10 @@ from typing import *
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor
 
-from modules import representation, detection, modeling
-from schemas.FacialRecognition import FacialRecogition
-from helpers.logger import logger
-from helpers import model_helpers
+from ..modules import representation, detection, modeling
+from ..schemas.FacialRecognition import FacialRecogition
+from ..helpers.logger import logger
+from ..helpers import model_helpers
 
 def recognize(
     img: np.ndarray,

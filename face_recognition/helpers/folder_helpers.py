@@ -1,6 +1,6 @@
 import os
 
-from helpers.logger import logger
+from ..helpers.logger import logger
 
 def initialize_folder() -> None:
     home = get_home()

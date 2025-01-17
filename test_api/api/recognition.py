@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, status
 
-from core import config
-from schemas.base import DataResponse
-from schemas.recognition import RecognitionRequest
+from ..core import config
+from ..schemas.base import DataResponse
+from ..schemas.recognition import RecognitionRequest
 
 from face_recognition.modules import recognition
 

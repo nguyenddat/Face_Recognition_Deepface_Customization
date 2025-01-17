@@ -3,7 +3,7 @@ from typing import *
 import numpy as np
 import cv2
 
-from helpers import package_helpers
+from ..helpers import package_helpers
 
 tf_major_version = package_helpers.get_tf_major_version()
 if tf_major_version == 1:
