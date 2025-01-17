@@ -32,18 +32,6 @@ def recognize(
         "threshold": threshold,
         "prediction": y[min_idx]
     }
-    # min_distance, min_idx = float("inf"), None
-    # for idx, source_embedding in enumerate(X):
-    #     distance = model_helpers.find_distance(source_embedding, img, distance_metric)
-    #     if distance <= min_distance:
-    #         min_distance = distance
-    #         min_idx = idx
-    # return {
-    #     "verified": min_distance <= threshold,
-    #     "distance": min_distance,
-    #     "threshold": threshold,
-    #     "prediction": y[min_idx]
-    # }
 
 def verify(
     img1_path: Union[str, np.ndarray, List[float]],

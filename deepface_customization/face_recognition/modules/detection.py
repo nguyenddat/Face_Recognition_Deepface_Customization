@@ -123,12 +123,16 @@ def extract_face(img: np.ndarray,
                                               left_eye = left_eye,
                                               right_eye = right_eye)
         
-        rotated_x1, rotated_y1, rotated_x2, rotated_y2 = preprocessing.project_facial_area(facial_area = (relative_x,
-                                                                                            relative_y,
-                                                                                            relative_x + w,
-                                                                                            relative_y + h),
-                                                                             angle = angle,
-                                                                             size = (sub_img.shape[0], sub_img.shape[1]))
+        rotated_x1, rotated_y1, rotated_x2, rotated_y2 = preprocessing.project_facial_area(
+            facial_area = (
+                relative_x,
+                relative_y,
+                relative_x + w,
+                relative_y + h
+                ),
+            angle = angle,
+            size = (sub_img.shape[0], sub_img.shape[1])
+        )
         
         detected_face = aligned_sub_img[
             int(rotated_y1): int(rotated_y2),

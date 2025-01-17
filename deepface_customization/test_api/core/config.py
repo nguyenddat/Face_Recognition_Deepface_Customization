@@ -8,6 +8,6 @@ load_dotenv()
 class Settings(BaseSettings):
     PROJECT_NAME: str = os.getenv("PROJECT_NAME", "")
     BACKEND_CORS_ORIGINS: List[AnyStr] = ["*"]
-    DB_PATH: str = os.getenv("DB_PATH", "")
+    DB_PATH: str = os.getenv("DB_PATH", str(os.path.join(os.getcwd(), "test_api", "data")))
     
 settings = Settings()

@@ -14,7 +14,7 @@ def recognize(api_data: RecognitionRequest):
         raise HTTPException(status_code = status.HTTP_400_BAD_REQUEST, detail = "Data is not found")
 
     try:
-        resp = recognition(
+        resp = recognition.find(
             img_path = api_data.data,
             db_path = str(config.settings.DB_PATH),
             model_name = api_data.model_name,
@@ -28,6 +28,5 @@ def recognize(api_data: RecognitionRequest):
     except Exception as err:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail = err) from err
         
-    return DataResponse().success_response(data = resp)
-    
+    return resp    
     

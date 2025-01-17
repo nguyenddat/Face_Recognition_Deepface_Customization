@@ -23,7 +23,7 @@ def download_weights_if_necessary(
 ) -> str:
     home = folder_helpers.get_home()
     
-    target_file = os.path.normpath(os.path.join(home, "weights", file_name))
+    target_file = os.path.normpath(os.path.join(home, "face_recognition", "weights", file_name))
     if os.path.isfile(target_file):
         logger.debug(f"{file_name} is already available at {target_file}")
         return target_file

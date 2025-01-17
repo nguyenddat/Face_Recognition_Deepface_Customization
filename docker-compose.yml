@@ -1,0 +1,17 @@
+services:
+  app:
+    container_name: deepface_custom
+    build: 
+      context: ./deepface_customization
+    env_file:
+      - ./deepface_customization/.env
+    ports:
+      - "5050:8000"
+    restart: unless-stopped
+    networks: 
+      - deepface_custom
+
+networks:
+  deepface_custom:
+    driver: bridge
+
