@@ -171,22 +171,6 @@ def extract_embeddings_and_facial_areas(img_path: Union[str, np.ndarray],
                                         detector_backend: str = "opencv",
                                         align: bool = True,
                                         normalize_face: bool = True):
-    try:
-        img_embeddings, img_facial_areas =  extract_faces_and_embeddings(img_path = img_path,
-                                                                         model_name = model_name,
-                                                                         detector_backend = detector_backend,
-                                                                         align = align,
-                                                                         normalize_face = normalize_face)
-    except ValueError as err:
-        raise ValueError("Exception while processing img") from err
-    
-    return img_embeddings, img_facial_areas
-
-def extract_faces_and_embeddings(img_path: np.ndarray,
-                                 model_name: str = "VGG-Face",
-                                 detector_backend: str = "opencv",
-                                 align: bool = True,
-                                 normalize_face: bool = True):
     embeddings = []
     facial_areas = []
 
