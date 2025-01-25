@@ -47,11 +47,10 @@ def extract_faces(img_path: Union[str, np.ndarray],
         w = min(width - x - 1, int(current_region.w))
         h = min(height - y - 1, int(current_region.h))
 
-        facial_area = {"x": x, "y": y, "w": w, "h": h}
-        if current_region.left_eye:
-            facial_area["left_eye"] = current_region.left_eye
-        if current_region.right_eye:
-            facial_area["right_eye"] = current_region.right_eye
+        facial_area = {"x": x, "y": y, "w": w, "h": h,
+                       "left_eye": current_region.left_eye,
+                       "right_eye": current_region.right_eye}
+        
         if current_region.nose:
             facial_area["nose"] = current_region.nose
         if current_region.left_mouth:
@@ -115,7 +114,7 @@ def extract_face(img: np.ndarray,
         int(x): int(x + w)
     ]
     
-    if align:
+    if align and left_eye is not None and right_eye is not None:
         sub_img, relative_x, relative_y = preprocessing.extract_sub_img(img = img,
                                                             facial_area = (x, y, w, h))
         
