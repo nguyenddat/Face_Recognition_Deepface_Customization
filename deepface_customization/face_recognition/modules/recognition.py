@@ -14,31 +14,25 @@ def concurrent_load_store_data(dir_path, label, backup_file):
     try:
         if os.path.exists(backup_file):
             with open(backup_file, "rb") as file:
-                backup_data = pickle.load(file)
-            X.extend(backup_file)
-            y.extend([label] * len(backup_data))
-        else:
-            current_data = []
-            for file in os.listdir(dir_path):
-                file_path = os.path.join(dir_path, file)
-                if os.path.isfile(file_path) and file.endswith(".jpg"):
-                    img_embeddings, _ = detection.extract_embeddings_and_facial_areas(
-                        img_path = file_path
-                    )
-                    current_data.extend(img_embeddings)
-            
-            with open(backup_file, "wb") as file:
-                pickle.dump(current_data, file)
-            
-            X.extend(current_data)
-            y.extend([label] * len(current_data))
-    
-    except Exception as err:
-        raise SystemError("Error while loading stored data") from err
+                X = pickle.load(file)
+                y = [label] * len(X)
+                return X, y
+    except:
+        X, y = [], []
+        for file in os.listdir(dir_path):
+            file_path = os.path.join(dir_path, file)
+            if os.path.isfile(file_path) and file.endswith(".jpg"):
+                img_embeddings, _ = detection.extract_embeddings_and_facial_areas(
+                    img_path = file_path,
+                    detector_backend = "retinaface"
+                )
+                X.extend(img_embeddings)
+                y.extend(label)
+        
+        with open(backup_file, "wb") as file:
+            pickle.dump(X, file)
+        return X, y
 
-    return X, y
-
-    
 def load_store_data(
     model_name: str,
     detector_backend: str, 
@@ -64,8 +58,6 @@ def load_store_data(
             backup_file = os.path.join(dir_path, "backup.pkl")
             
             X, y = concurrent_load_store_data(dir_path, label, backup_file)
-            print(X)
-            print(y)
             representations["X"].extend(X)
             representations["y"].extend(y)
     

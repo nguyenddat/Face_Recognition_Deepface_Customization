@@ -30,8 +30,8 @@ def find_cosine_distance(
         beta_norm = l2_normalize(beta_embedding, axis = 1)
         cosine_similarities = np.dot(alpha_norm, beta_norm.T)
         distances =  1 - cosine_similarities
-    else:
-        raise ValueError("Embeddings must be 1D or 2D")
+    # else:
+    #     raise ValueError("Embeddings must be 1D or 2D")
     
     return distances
     
