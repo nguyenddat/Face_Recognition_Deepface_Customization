@@ -5,84 +5,18 @@ import pickle
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor
 
-from ..helpers import image_helpers
 from ..modules import detection, verification
 
-def concurrent_load_store_data(dir_path, label, backup_file):
-    X = []
-    y = []
-    try:
-        if os.path.exists(backup_file):
-            with open(backup_file, "rb") as file:
-                X = pickle.load(file)
-                y = [label] * len(X)
-                return X, y
-    except:
-        X, y = [], []
-        for file in os.listdir(dir_path):
-            file_path = os.path.join(dir_path, file)
-            if os.path.isfile(file_path) and file.endswith(".jpg"):
-                img_embeddings, _ = detection.extract_embeddings_and_facial_areas(
-                    img_path = file_path,
-                    detector_backend = "retinaface"
-                )
-                X.extend(img_embeddings)
-                y.extend(label)
-        
-        with open(backup_file, "wb") as file:
-            pickle.dump(X, file)
-        return X, y
-
-def load_store_data(
-    model_name: str,
-    detector_backend: str, 
-    db_path: str
-):
-    if not os.path.isdir(db_path):
-        raise ValueError("db path is not existed")
-    
-    file_parts = ["ds", "model", model_name, "detector", detector_backend]
-    file_name = "_".join(file_parts).lower() + ".pkl"
-    datastore_path = os.path.join(db_path, file_name)
-    
-    if os.path.exists(datastore_path):
-        with open(datastore_path, "rb") as file:
-            return pickle.load(file)
-    
-    representations = {"X": [], "y": []}
-
-    for dir in os.scandir(db_path):
-        if os.path.isdir(dir):
-            label = dir.name
-            dir_path = dir.path
-            backup_file = os.path.join(dir_path, "backup.pkl")
-            
-            X, y = concurrent_load_store_data(dir_path, label, backup_file)
-            representations["X"].extend(X)
-            representations["y"].extend(y)
-    
-    with open(datastore_path, "wb") as file:
-        pickle.dump(representations, file)
-    
-    return representations
-            
 def find(
     img_path: Union[str, np.ndarray],
-    db_path: str,
-    model_name: str = "VGG-Face",
+    data: dict,
     distance_metric: str = "cosine",
     detector_backend: str = "opencv",
     align: bool = True,
     threshold: Optional[float] = None,
     normalize_face: bool = True,
 ):
-    representations = load_store_data(
-        model_name = model_name,
-        detector_backend = detector_backend,
-        db_path = db_path
-    )
-    
-    if len(representations["X"]) == 0 or len(representations["y"]) == 0:    
+    if len(data["X"]) == 0 or len(data["y"]) == 0:    
         return []
     
     # ______________________________________________________________________
@@ -96,7 +30,7 @@ def find(
     def concurrent_recognize(source_obj):
         return verification.recognize(
             img = source_obj,
-            data_store = representations, 
+            data_store = data, 
             threshold = threshold, 
             distance_metric = distance_metric
         )
