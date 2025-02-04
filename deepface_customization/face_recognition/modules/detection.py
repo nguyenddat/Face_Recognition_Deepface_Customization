@@ -2,46 +2,39 @@ from typing import *
 
 import numpy as np
 import cv2
-from heapq import nlargest
 
 from ..modules import modeling, preprocessing, representation
 from ..helpers import image_helpers
 from ..schemas.Detector import *
 
-def extract_faces(img_path: Union[str, np.ndarray],
-                  detector_backend: str = "opencv",
-                  align: bool = True,
-                  normalize_face: bool = True):
-    resp_objs = []
+def extract_faces(
+    img_path: Union[str, np.ndarray],
+    detector_backend: str = "opencv"
+):
     
     img, img_name = image_helpers.load_image(img_path)
     if img is None:
         raise ValueError(f"Exception while loading image: {img_name}")
     
     height, width, _ = img.shape
-    
     base_region = FacialAreaRegion(
         x = 0, y = 0, w = width, h = height,
         confidence = 0
     )
     
-    face_objs = detect_faces(img = img,
-                             detector_backend = detector_backend, 
-                             align = align)
+    face_objs = detect_faces(img = img, detector_backend = detector_backend)
     
     if len(face_objs) == 0:
         face_objs = [DetectedFace(img = img, facial_area = base_region, confidence = 0)]
     
+    resp_objs = []
     for face_obj in face_objs:
-        current_img = face_obj.img
+        current_img = (face_obj.img) / 255
         current_region = face_obj.facial_area
 
         if current_img.shape[0] == 0 or current_img.shape[1] == 0:
             continue
-        
-        if normalize_face:
-            current_img = current_img / 255
-        
+                
         x = max(0, int(current_region.x))
         y = max(0, int(current_region.y))
         w = min(width - x - 1, int(current_region.w))
@@ -58,51 +51,56 @@ def extract_faces(img_path: Union[str, np.ndarray],
         if current_region.right_mouth:
             facial_area["right_mouth"] = current_region.right_mouth
         
-        resp_objs.append({"img": current_img,
-                          "facial_area": facial_area,
-                          "confidence": round(float(current_region.confidence or 0), 2)})
+        resp_objs.append({
+            "img": current_img,
+            "facial_area": facial_area,
+            "confidence": round(float(current_region.confidence or 0), 2)
+        })
+
     return resp_objs
 
-def detect_faces(img: np.ndarray,
-                 detector_backend: str = "opencv",
-                 align: bool = True) -> List[DetectedFace]:
-    height, width, _ = img.shape
-    
+def detect_faces(
+    img: np.ndarray,
+    detector_backend: str = "opencv"
+) -> List[DetectedFace]:
+
     face_detector: Detector = modeling.build_model(
         task = "face_detector",
         model_name = detector_backend
     )
-    
+
+    height, width, _ = img.shape        
     height_border = int(0.5 * height)
     width_border = int(0.5 * width)
 
-    if align:
-        img = cv2.copyMakeBorder(
-            src = img,
-            top = height_border,
-            bottom = height_border,
-            left = width_border,
-            right = width_border,
-            borderType = cv2.BORDER_CONSTANT,
-            value = [0, 0, 0]
-        )
+    img = cv2.copyMakeBorder(
+        src = img,
+        top = height_border,
+        bottom = height_border,
+        left = width_border,
+        right = width_border,
+        borderType = cv2.BORDER_CONSTANT,
+        value = [0, 0, 0]
+    )
     
     facial_areas = face_detector.detect_faces(img)
     
     return [
-        extract_face(img = img,
-                     facial_area = facial_area,
-                     align = align,
-                     width_border = width_border,
-                     height_border = height_border)
-        for facial_area in facial_areas
+        extract_face(
+            img = img,
+            facial_area = facial_area,
+            width_border = width_border,
+            height_border = height_border
+        ) for facial_area in facial_areas
     ]
     
-def extract_face(img: np.ndarray,
-                 facial_area: FacialAreaRegion,
-                 align: bool,
-                 width_border: int,
-                 height_border: int) -> DetectedFace:
+def extract_face(
+    img: np.ndarray,
+    facial_area: FacialAreaRegion,
+    width_border: int,
+    height_border: int
+) -> DetectedFace:
+    
     x, y, w, h = facial_area.x, facial_area.y, facial_area.w, facial_area.h
     left_eye, right_eye = facial_area.left_eye, facial_area.right_eye
     nose = facial_area.nose
@@ -114,13 +112,13 @@ def extract_face(img: np.ndarray,
         int(x): int(x + w)
     ]
     
-    if align and left_eye is not None and right_eye is not None:
+    if left_eye is not None and right_eye is not None:
         sub_img, relative_x, relative_y = preprocessing.extract_sub_img(img = img,
-                                                            facial_area = (x, y, w, h))
+                                                                        facial_area = (x, y, w, h))
         
         aligned_sub_img, angle = preprocessing.align_img_with_eyes(img = sub_img,
-                                              left_eye = left_eye,
-                                              right_eye = right_eye)
+                                                                   left_eye = left_eye,
+                                                                   right_eye = right_eye)
         
         rotated_x1, rotated_y1, rotated_x2, rotated_y2 = preprocessing.project_facial_area(
             facial_area = (
@@ -128,7 +126,7 @@ def extract_face(img: np.ndarray,
                 relative_y,
                 relative_x + w,
                 relative_y + h
-                ),
+            ),
             angle = angle,
             size = (sub_img.shape[0], sub_img.shape[1])
         )
@@ -168,16 +166,12 @@ def extract_face(img: np.ndarray,
 
 def extract_embeddings_and_facial_areas(img_path: Union[str, np.ndarray],
                                         model_name: str = "VGG-Face",
-                                        detector_backend: str = "opencv",
-                                        align: bool = True,
-                                        normalize_face: bool = True):
+                                        detector_backend: str = "opencv"):
     embeddings = []
     facial_areas = []
 
     resp_objs = extract_faces(img_path = img_path,
-                              detector_backend = detector_backend,
-                              align = align, 
-                              normalize_face = normalize_face)
+                              detector_backend = detector_backend)
     
     for resp_obj in resp_objs:
         current_img = resp_obj["img"]

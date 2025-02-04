@@ -39,8 +39,6 @@ def verify(
     model_name: str = "VGG-Face",
     detector_backend: str = "opencv",
     distance_metric: str = "cosine",
-    align: bool = True,
-    normalize_face: bool = True,
     threshold: Optional[float] = None
 ) -> Dict[Any, Any]:
 
@@ -50,17 +48,13 @@ def verify(
     img1_embeddings, img1_facial_areas = detection.extract_embeddings_and_facial_areas(
         img_path = img1_path,
         model_name = model_name,
-        detector_backend = detector_backend,
-        align = align,
-        normalize_face = normalize_face
+        detector_backend = detector_backend
     )
         
     img2_embeddings, img2_facial_areas = detection.extract_embeddings_and_facial_areas(
         img_path = img2_path,
         model_name = model_name,
-        detector_backend = detector_backend,
-        align = align,
-        normalize_face = normalize_face
+        detector_backend = detector_backend
     )
     threshold = threshold or model_helpers.find_threshold(model_name, distance_metric)
     

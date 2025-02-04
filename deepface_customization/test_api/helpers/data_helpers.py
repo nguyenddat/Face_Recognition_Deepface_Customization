@@ -4,7 +4,8 @@ import pickle
 
 from face_recognition.modules import detection
 
-DATA_PTH = os.path.join(os.getcwd(), "data")
+# DATA_PTH = os.path.join("./deepface_customization", "test_api", "data")
+DATA_PTH = "./test_api/data"
 
 def load_stored_data():
     stored_data_pth = os.path.join(DATA_PTH, "data.pkl")
@@ -40,7 +41,7 @@ def load_stored_data():
                         data["X"].extend(img_embeddings)
                         data["y"].extend(y)
 
-                    with open(os.path.join(dir_path, "backup.pkl")) as file:
+                    with open(os.path.join(dir_path, "backup.pkl"), "wb") as file:
                         pickle.dump(img_embeddings, file)
     
     with open(stored_data_pth, "wb") as file:

@@ -12,19 +12,16 @@ def find(
     data: dict,
     distance_metric: str = "cosine",
     detector_backend: str = "opencv",
-    align: bool = True,
-    threshold: Optional[float] = None,
-    normalize_face: bool = True,
+    threshold: Optional[float] = None
 ):
+    
     if len(data["X"]) == 0 or len(data["y"]) == 0:    
         return []
     
     # ______________________________________________________________________
     source_objs = detection.extract_faces(
         img_path = img_path,
-        detector_backend = detector_backend,
-        align = align,
-        normalize_face = normalize_face
+        detector_backend = detector_backend
     )
     
     def concurrent_recognize(source_obj):
