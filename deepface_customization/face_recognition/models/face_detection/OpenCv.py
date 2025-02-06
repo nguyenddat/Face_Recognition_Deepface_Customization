@@ -19,14 +19,15 @@ class OpenCvClient(Detector):
     def detect_faces(self, img: np.ndarray) -> List[FacialAreaRegion]:
         resp = []
         detected_face = None
-        
+
+        faces = []
         try:
             faces, _, scores = self.model["face_detector"].detectMultiScale3(
                 img, 1.1, 10, outputRejectLevels = True
             )
         except:
             pass
-        
+    
         if len(faces) > 0:
             for (x, y, w, h), confidence in zip(faces, scores):
                 detected_face = img[int(y): int(y + h), int(x): int(x + w)]

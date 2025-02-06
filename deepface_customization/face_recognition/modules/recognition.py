@@ -3,7 +3,6 @@ from typing import *
 
 import pickle
 import numpy as np
-from concurrent.futures import ThreadPoolExecutor
 
 from ..modules import detection, verification
 
@@ -19,24 +18,24 @@ def find(
         return []
     
     # ______________________________________________________________________
+    resp_objs = []
+
     source_objs = detection.extract_faces(
         img_path = img_path,
         detector_backend = detector_backend
     )
     
-    def concurrent_recognize(source_obj):
-        return verification.recognize(
-            img = source_obj,
-            data_store = data, 
-            threshold = threshold, 
-            distance_metric = distance_metric
-        )
+    for source_obj in source_objs:
+        img_embeddings, facial_areas = detection.extract_embeddings_and_facial_areas(source_obj["img"], detector_backend = detector_backend)
+        
+        for img_embedding, facial_area in zip(img_embeddings, facial_areas):
+            resp_obj = verification.recognize(
+                img = img_embedding,
+                data_store = data,
+                threshold = threshold,
+                distance_metric = distance_metric
+            )
+
+            resp_objs.append({"prediction": resp_obj, "facial_area": facial_area})
     
-    with ThreadPoolExecutor() as executor:
-        results = list(executor.map(concurrent_recognize, source_objs))
-    
-    return results
-    
-    
-    
-    
+    return resp_objs

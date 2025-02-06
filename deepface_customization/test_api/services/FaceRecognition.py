@@ -9,16 +9,15 @@ class FaceRecognition:
     def __init__(self):
         self.data = data_helpers.load_stored_data()
     
-    def find(
+    def find(self, 
             img_path: Union[str, np.ndarray],
-            data: dict,
             distance_metric: str = "cosine",
             detector_backend: str = "opencv",
             threshold: Optional[float] = None
     ):
         return recognition.find(
             img_path = img_path,
-            data = data,
+            data = self.data,
             distance_metric = distance_metric,
             detector_backend = detector_backend,
             threshold = threshold

@@ -3,8 +3,7 @@ from typing import *
 from pydantic import BaseModel
 
 class RecognitionRequest(BaseModel):
-    data: str
-    model_name: str = "VGG-Face"
+    img_path: str
     detector_backend: str = "opencv"
     distance_metric: str = "cosine"
     threshold: Optional[float] = None

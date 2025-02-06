@@ -1,11 +1,8 @@
 from typing import *
 
 import numpy as np
-from concurrent.futures import ThreadPoolExecutor
 
-from ..modules import representation, detection, modeling
-from ..schemas.FacialRecognition import FacialRecogition
-from ..helpers.logger import logger
+from ..modules import detection
 from ..helpers import model_helpers
 
 def recognize(
@@ -14,24 +11,24 @@ def recognize(
     threshold: float,
     distance_metric: str = "cosine",
 ):
+    
+    threshold = threshold or model_helpers.find_threshold("VGG-Face", distance_metric)
     X = data_store["X"]
     y = data_store["y"]
     
-    def concurrent_compute_distance(idx_embedding):
-        idx, embedding = idx_embedding
-        distance = model_helpers.find_distance(embedding, img, distance_metric)
-        return (idx, distance)
-    
-    with ThreadPoolExecutor() as executor:
-        results = list(executor.map(concurrent_compute_distance, enumerate(X)))
-    
-    min_idx, min_distance = min(results, key = lambda x: x[1])
-    return {
-        "verified": min_distance <= threshold,
-        "distance": min_distance,
-        "threshold": threshold,
-        "prediction": y[min_idx]
-    }
+    min_dist, pred = np.inf, None
+    for xi, yi in zip(X, y):
+        xi = np.array(xi)
+        dist = model_helpers.find_distance(img, xi, distance_metric)
+        
+        if dist < min_dist and dist <= threshold:
+            min_dist = dist 
+            pred = yi
+
+    if not pred:
+        return "guest"
+    else:
+        return pred
 
 def verify(
     img1_path: Union[str, np.ndarray, List[float]],
